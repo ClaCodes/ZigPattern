@@ -1,6 +1,6 @@
 pub const Rectangle = struct{
-    pub fn fromChar(a: u8) RectangleError!Rectangle {
-        if (a==@typeName(Rectangle)[0]) {
+    pub fn fromCSV(a: []const u8) RectangleError!Rectangle {
+        if (a[0]==@typeName(Rectangle)[0]) {
             return Rectangle {
             };
         }
