@@ -1,43 +1,9 @@
 const std = @import("std");
 
-const Circle = struct{
-    radius:i64,
-    pub fn fromChar(a: u8) ShapeError!Circle {
-        if (a=='C') {
-            return Circle{
-                .radius=99
-            };
-        }
-        return ShapeError.ParseError;
-    }
-};
-
-const Square = struct{
-    side:i64,
-    pub fn fromChar(a: u8) ShapeError!Square {
-        if (a=='S') {
-            return Square {
-                .side=99
-            };
-        }
-        return ShapeError.ParseError;
-    }
-};
-
-const Rectangle = struct{
-    pub fn fromChar(_: u8) ShapeError!Rectangle {
-        return ShapeError.ParseError;
-    }
-};
-
-const ShapeError = error {
-    ParseError,
-};
-
 const Shape = union(enum) {
-    circle: Circle,
-    square: Square,
-    rectangle: Rectangle,
+    circle: @import("circle.zig").Circle,
+    square: @import("square.zig").Square,
+    rectangle: @import("rectangle.zig").Rectangle,
 };
 
 fn fromChar(char: u8) !Shape {
@@ -49,6 +15,10 @@ fn fromChar(char: u8) !Shape {
     }
     return ShapeError.ParseError;
 }
+
+const ShapeError = error {
+    ParseError,
+};
 
 test "Shape valid expect parse ok" {
     _ = try fromChar('S');
