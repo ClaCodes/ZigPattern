@@ -33,7 +33,12 @@ pub fn build(b: *std.build.Builder) void {
     shape_tests.setTarget(target);
     shape_tests.setBuildMode(mode);
 
+    const parser_tests = b.addTest("src/parser.zig");
+    parser_tests.setTarget(target);
+    parser_tests.setBuildMode(mode);
+
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&exe_tests.step);
     test_step.dependOn(&shape_tests.step);
+    test_step.dependOn(&parser_tests.step);
 }

@@ -1,6 +1,8 @@
 const mem = @import("std").mem;
+const parser = @import("parser.zig");
 
 pub fn unqualified_name(name : []const u8) []const u8{
+    // todo is there a library function for this?
     var index = name.len-1;
     while(name[index]!='.'){
         index-=1;
@@ -11,12 +13,15 @@ pub fn unqualified_name(name : []const u8) []const u8{
 const circleName = unqualified_name(@typeName(Circle));
 
 pub const Circle = struct{
-    radius:i64,
+    radius:u64,
     pub fn fromCSV(csv: []const u8) CircleError!Circle {
         var items = mem.split(u8, csv, ",");
-        if (mem.eql(u8, items.first(), circleName)) {
+        const t = items.next() orelse return CircleError.ParseError;
+        const r = items.next() orelse return CircleError.ParseError;
+        const ar = parser.atoi(r) catch return CircleError.ParseError;
+        if (mem.eql(u8, t, circleName)) {
             return Circle{
-                .radius=99
+                .radius=ar
             };
         }
         return CircleError.ParseError;

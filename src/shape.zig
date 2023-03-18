@@ -22,14 +22,15 @@ const ShapeError = error {
 
 test "Shape valid expect parse ok" {
     _ = try fromCSV("Square");
-    _ = try fromCSV("Circle");
     _ = try fromCSV("Rectangle");
-    _ = try fromCSV("Circle,2,3,");
+    const c = try fromCSV("Circle,21,3,");
+    try std.testing.expectEqual(c.circle.radius, 21);
     _ = try fromCSV("Rectangle,df;jlw   2");
     _ = try fromCSV("Square,");
 }
 
 test "Shape invalid expect parse fail" {
+    try std.testing.expectError(error.ParseError, fromCSV("Circle"));
     try std.testing.expectError(error.ParseError, fromCSV("8"));
     try std.testing.expectError(error.ParseError, fromCSV(""));
     try std.testing.expectError(error.ParseError, fromCSV("aplskdfjwp"));
