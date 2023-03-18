@@ -1,7 +1,12 @@
+const std = @import("std");
+const unqualified_name = @import("circle.zig").unqualified_name;
+
+const squareName = unqualified_name(@typeName(Square));
+
 pub const Square = struct{
     side:i64,
-    pub fn fromCSV(a: []const u8) SquareError!Square {
-        if (a[0]==@typeName(Square)[0]) {
+    pub fn fromCSV(csv: []const u8) SquareError!Square {
+        if (std.mem.eql(u8, csv, squareName)) {
             return Square {
                 .side=99
             };

@@ -21,9 +21,9 @@ const ShapeError = error {
 };
 
 test "Shape valid expect parse ok" {
-    _ = try fromCSV("s");
-    _ = try fromCSV("c");
-    _ = try fromCSV("r");
+    _ = try fromCSV("Square");
+    _ = try fromCSV("Circle");
+    _ = try fromCSV("Rectangle");
 }
 test "Shape invalid expect parse fail" {
     const result = fromCSV("8");
