@@ -1,7 +1,7 @@
 pub const Circle = struct{
     radius:i64,
     pub fn fromChar(a: u8) CircleError!Circle {
-        if (a=='C') {
+        if (a==@typeName(Circle)[0]) {
             return Circle{
                 .radius=99
             };

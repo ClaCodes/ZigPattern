@@ -1,6 +1,6 @@
 pub const Rectangle = struct{
     pub fn fromChar(a: u8) RectangleError!Rectangle {
-        if (a=='R') {
+        if (a==@typeName(Rectangle)[0]) {
             return Rectangle {
             };
         }
