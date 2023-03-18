@@ -1,5 +1,5 @@
 const mem = @import("std").mem;
-const parser = @import("parser.zig");
+const fmt = @import("std").fmt;
 
 pub fn unqualified_name(name : []const u8) []const u8{
     // todo is there a library function for this?
@@ -25,7 +25,7 @@ pub const Circle = struct{
 
         if (!mem.eql(u8, type_name, circle_name)) return CircleError.ParseError;
 
-        const radius = parser.atoi(raw_radius) catch return CircleError.ParseError;
+        const radius = fmt.parseInt(u64, raw_radius, 10) catch return CircleError.ParseError;
 
         return Circle{
             .radius=radius
