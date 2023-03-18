@@ -18,6 +18,7 @@ pub const Circle = struct{
         var items = mem.split(u8, csv, ",");
         const t = items.next() orelse return CircleError.ParseError;
         const r = items.next() orelse return CircleError.ParseError;
+        if (items.next() != null) return CircleError.ParseError;
         const ar = parser.atoi(r) catch return CircleError.ParseError;
         if (mem.eql(u8, t, circleName)) {
             return Circle{

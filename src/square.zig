@@ -1,15 +1,20 @@
 const mem = @import("std").mem;
+const parser = @import("parser.zig");
 const unqualified_name = @import("circle.zig").unqualified_name;
 
 const squareName = unqualified_name(@typeName(Square));
 
 pub const Square = struct{
-    side:i64,
+    side:u64,
     pub fn fromCSV(csv: []const u8) SquareError!Square {
         var items = mem.split(u8, csv, ",");
-        if (mem.eql(u8, items.first(), squareName)) {
+        const t = items.next() orelse return SquareError.ParseError;
+        const r = items.next() orelse return SquareError.ParseError;
+        if (items.next() != null) return SquareError.ParseError;
+        const ar = parser.atoi(r) catch return SquareError.ParseError;
+        if (mem.eql(u8, t, squareName)) {
             return Square {
-                .side=99
+                .side=ar
             };
         }
         return SquareError.ParseError;
