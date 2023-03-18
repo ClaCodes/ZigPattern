@@ -10,22 +10,26 @@ pub fn unqualified_name(name : []const u8) []const u8{
     return name[index+1..];
 }
 
-const circleName = unqualified_name(@typeName(Circle));
+const circle_name = unqualified_name(@typeName(Circle));
 
 pub const Circle = struct{
     radius:u64,
-    pub fn fromCSV(csv: []const u8) CircleError!Circle {
+
+    pub fn fromCSV(csv: []const u8) !Circle {
+
         var items = mem.split(u8, csv, ",");
-        const t = items.next() orelse return CircleError.ParseError;
-        const r = items.next() orelse return CircleError.ParseError;
+
+        const type_name = items.next() orelse return CircleError.ParseError;
+        const raw_radius = items.next() orelse return CircleError.ParseError;
         if (items.next() != null) return CircleError.ParseError;
-        const ar = parser.atoi(r) catch return CircleError.ParseError;
-        if (mem.eql(u8, t, circleName)) {
-            return Circle{
-                .radius=ar
-            };
-        }
-        return CircleError.ParseError;
+
+        if (!mem.eql(u8, type_name, circle_name)) return CircleError.ParseError;
+
+        const radius = parser.atoi(raw_radius) catch return CircleError.ParseError;
+
+        return Circle{
+            .radius=radius
+        };
     }
 };
 
