@@ -8,15 +8,16 @@ const Shape = union(enum) {
 
 fn fromCSV(csv: []const u8) !Shape {
     var items = std.mem.split(u8, csv, ",");
-    inline for (std.meta.fields(Shape)) |field| {
+    inline for (std.meta.fields(Shape)) |shape| {
         items.reset();
-        if(std.mem.eql(u8, items.first(), unqualified_name(@typeName(field.field_type)))){
-            const result = field.field_type.fromStringIterator(&items);
+        if(std.mem.eql(u8, items.first(), unqualified_name(@typeName(shape.field_type)))){
+            const result = shape.field_type.fromStringIterator(&items);
             if (items.next() != null) return ShapeError.ParseError;
             if (result) |constructed| {
-                return @unionInit(Shape, field.name, constructed);
-            } else |_| {}
-            return ShapeError.ParseError;
+                return @unionInit(Shape, shape.name, constructed);
+            } else |_| {
+                return ShapeError.ParseError;
+            }
         }
     }
     return ShapeError.ParseError;
