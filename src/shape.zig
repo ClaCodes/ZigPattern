@@ -23,6 +23,7 @@ const ShapeError = error {
 test "Shape valid expect parse ok" {
     _ = try fromChar('S');
     _ = try fromChar('C');
+    _ = try fromChar('R');
 }
 test "Shape invalid expect parse fail" {
     const result = fromChar('8');
