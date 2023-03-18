@@ -1,23 +1,27 @@
 const std = @import("std");
 
-const Shape = union(enum) {
-    circle: @import("circle.zig").Circle,
-    square: @import("square.zig").Square,
-    rectangle: @import("rectangle.zig").Rectangle,
+const Shapes = union(enum) {
+    Circle: @import("circle.zig").Circle,
+    Square: @import("square.zig").Square,
+    Rectangle: @import("rectangle.zig").Rectangle,
 };
 
-fn fromCSV(csv: []const u8) !Shape {
+fn fromCSV(csv: []const u8) !Shapes {
     var items = std.mem.split(u8, csv, ",");
-    inline for (std.meta.fields(Shape)) |shape| {
-        items.reset();
-        if(std.mem.eql(u8, items.first(), unqualified_name(@typeName(shape.field_type)))){
-            const result = shape.field_type.fromStringIterator(&items);
+
+    inline for (std.meta.fields(Shapes)) |shape_kind| {
+        if(std.mem.eql(u8, items.first(), shape_kind.name)){
+            const result = shape_kind.field_type.fromStringIterator(&items);
+
             if (items.next() != null) return ShapeError.ParseError;
+
             if (result) |constructed| {
-                return @unionInit(Shape, shape.name, constructed);
+                return @unionInit(Shapes, shape_kind.name, constructed);
             } else |_| {
                 return ShapeError.ParseError;
             }
+        } else {
+            items.reset();
         }
     }
     return ShapeError.ParseError;
@@ -27,28 +31,19 @@ const ShapeError = error {
     ParseError,
 };
 
-fn unqualified_name(fully_qualified_name : []const u8) []const u8{
-    var namespaces = std.mem.split(u8, fully_qualified_name, ".");
-    var name:[]const u8 = "";
-    while (namespaces.next()) |next_name| {
-        name = next_name;
-    }
-    return name;
-}
-
-test "Shape valid expect parse ok" {
+test "Shapes valid expect parse ok" {
     const c = try fromCSV("Circle,21");
-    try std.testing.expectEqual(c.circle.radius, 21);
+    try std.testing.expectEqual(c.Circle.radius, 21);
 
     const r = try fromCSV("Rectangle,100,200");
-    try std.testing.expectEqual(r.rectangle.height, 100);
-    try std.testing.expectEqual(r.rectangle.width, 200);
+    try std.testing.expectEqual(r.Rectangle.height, 100);
+    try std.testing.expectEqual(r.Rectangle.width, 200);
 
     const s = try fromCSV("Square,0");
-    try std.testing.expectEqual(s.square.side, 0);
+    try std.testing.expectEqual(s.Square.side, 0);
 }
 
-test "Shape invalid expect parse fail" {
+test "Shapes invalid expect parse fail" {
     try std.testing.expectError(error.ParseError, fromCSV("8"));
     try std.testing.expectError(error.ParseError, fromCSV(""));
     try std.testing.expectError(error.ParseError, fromCSV("aplskdfjwp"));
