@@ -1,4 +1,4 @@
-const std = @import("std");
+const mem = @import("std").mem;
 
 pub fn unqualified_name(name : []const u8) []const u8{
     var index = name.len-1;
@@ -13,7 +13,8 @@ const circleName = unqualified_name(@typeName(Circle));
 pub const Circle = struct{
     radius:i64,
     pub fn fromCSV(csv: []const u8) CircleError!Circle {
-        if (std.mem.eql(u8, csv, circleName)) {
+        var items = mem.split(u8, csv, ",");
+        if (mem.eql(u8, items.first(), circleName)) {
             return Circle{
                 .radius=99
             };
