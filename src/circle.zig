@@ -1,29 +1,12 @@
 const mem = @import("std").mem;
 const fmt = @import("std").fmt;
 
-pub fn unqualified_name(name : []const u8) []const u8{
-    // todo is there a library function for this?
-    var index = name.len-1;
-    while(name[index]!='.'){
-        index-=1;
-    }
-    return name[index+1..];
-}
-
-const circle_name = unqualified_name(@typeName(Circle));
-
 pub const Circle = struct{
     radius:u64,
 
-    pub fn fromCSV(csv: []const u8) !Circle {
+    pub fn fromStringIterator(items: *mem.SplitIterator(u8)) !Circle {
 
-        var items = mem.split(u8, csv, ",");
-
-        const type_name = items.next() orelse return CircleError.ParseError;
         const raw_radius = items.next() orelse return CircleError.ParseError;
-        if (items.next() != null) return CircleError.ParseError;
-
-        if (!mem.eql(u8, type_name, circle_name)) return CircleError.ParseError;
 
         const radius = fmt.parseInt(u64, raw_radius, 10) catch return CircleError.ParseError;
 
